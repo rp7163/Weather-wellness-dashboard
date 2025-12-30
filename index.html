@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Wellness Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="app-body" class="p-4 md:p-8 min-h-screen transition-all duration-500 bg-blue-50">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl font-extrabold mb-4 text-inherit">Weather Wellness Dashboard</h1>
+            <div class="relative flex items-center space-x-2">
+                <div class="relative flex-1" id="search-container">
+                    <input type="text" id="city-search" autocomplete="off" placeholder="Search your city 🔍"
+                        class="w-full p-3 pl-10 text-gray-900 bg-white rounded-xl shadow-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    <i data-lucide="search" class="absolute left-3 top-3.5 text-gray-400 w-5 h-5"></i>
+                    <ul id="suggestions-list"
+                        class="absolute top-full mt-2 w-full max-h-72 overflow-y-auto bg-white text-gray-800 rounded-xl z-50 shadow-2xl hidden border border-gray-100">
+                    </ul>
+                </div>
+                <button id="location-btn" title="Get Current Location"
+                    class="p-3 bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg transition duration-300">
+                    <i data-lucide="map-pin" class="w-6 h-6 text-white"></i>
+                </button>
+            </div>
+            <p id="error-message" class="text-red-500 mt-2 hidden font-medium">City not found. Please try a valid city
+                name.</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <section id="current-weather"
+                    class="weather-card p-6 md:p-10 rounded-3xl shadow-2xl text-white bg-gradient-to-br from-blue-400 to-blue-600 relative overflow-hidden">
+                    <div id="not-found-box"
+                        class="hidden absolute inset-0 bg-gray-800/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center text-center p-6">
+                        <i data-lucide="map-pin-off" class="w-16 h-16 mb-4 text-gray-400"></i>
+                        <h3 class="text-2xl font-bold">City Not Found</h3>
+                        <p class="opacity-80">We couldn't find the location you entered. <br> Please check the spelling
+                            and try again.</p>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div>
+                            <h2 id="city-name" class="text-4xl md:text-5xl font-bold mb-1">--</h2>
+                            <p id="date-time" class="text-xl opacity-90 mb-4">Loading...</p>
+                            <p class="text-6xl md:text-8xl font-light" id="current-temp">--°C</p>
+                            <p class="text-2xl opacity-80 mt-1" id="feels-like">Feels like --°C</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 text-right">
+                            <div id="main-icon-container"
+                                class="w-32 h-32 md:w-48 md:h-48 mx-auto md:mx-0 flex items-center justify-center">
+                            </div>
+                            <p class="text-2xl font-semibold capitalize" id="weather-description">--</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-4 border-t border-white/20">
+                        <h3 class="text-xl font-semibold mb-2">Air Quality Status</h3>
+                        <div class="flex items-center space-x-4">
+                            <div id="wws-meter"
+                                class="w-full md:w-1/2 h-3 bg-white/20 rounded-full overflow-hidden shadow-inner">
+                                <div id="wws-progress" class="h-full rounded-full transition-all duration-700"
+                                    style="width: 0%;"></div>
+                            </div>
+                            <p id="wws-status" class="text-2xl font-bold">--</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    class="bg-black/5 dark:bg-white/10 backdrop-blur-md p-4 rounded-3xl shadow-xl border border-black/5 dark:border-white/10">
+                    <h3 class="text-xl font-semibold mb-3">3-Hour Forecast</h3>
+                    <div id="hourly-forecast" class="flex overflow-x-auto space-x-4 pb-2 hourly-scroll-container"></div>
+                </section>
+            </div>
+
+            <div class="lg:col-span-1 space-y-6">
+                <section
+                    class="grid grid-cols-2 gap-4 bg-black/5 dark:bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-black/5 dark:border-white/10">
+                    <h3 class="col-span-2 text-xl font-semibold mb-2">Metrics</h3>
+                    <div class="p-3 rounded-xl flex items-center space-x-3 shadow-md border border-black/5">
+                        <i data-lucide="droplets" class="w-6 h-6 text-blue-400"></i>
+                        <div>
+                            <p class="text-xs opacity-70">Humidity</p>
+                            <p id="humidity" class="font-bold text-lg">--%</p>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl flex items-center space-x-3 shadow-md border border-black/5">
+                        <i data-lucide="wind" class="w-6 h-6 text-green-400"></i>
+                        <div>
+                            <p class="text-xs opacity-70">Wind</p>
+                            <p id="wind-speed" class="font-bold text-lg">-- km/h</p>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl flex items-center space-x-3 shadow-md border border-black/5">
+                        <i data-lucide="sunrise" class="w-6 h-6 text-orange-400"></i>
+                        <div>
+                            <p class="text-xs opacity-70">Sunrise</p>
+                            <p id="sunrise-time" class="font-bold text-lg">--:--</p>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl flex items-center space-x-3 shadow-md border border-black/5">
+                        <i data-lucide="sunset" class="w-6 h-6 text-purple-400"></i>
+                        <div>
+                            <p class="text-xs opacity-70">Sunset</p>
+                            <p id="sunset-time" class="font-bold text-lg">--:--</p>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl flex items-center space-x-3 shadow-md border border-black/5">
+                        <i data-lucide="wind" class="w-6 h-6 text-yellow-500"></i>
+                        <div>
+                            <p class="text-xs opacity-70">AQI Index</p>
+                            <p id="aqi-index" class="font-bold text-lg">--</p>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl flex items-center space-x-3 shadow-md border border-black/5">
+                        <i data-lucide="gauge" class="w-6 h-6 text-red-400"></i>
+                        <div>
+                            <p class="text-xs opacity-70">Pressure</p>
+                            <p id="pressure" class="font-bold text-lg">-- hPa</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    class="shadow-md border dark:bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-black/5 dark:border-white/10">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i> Quick Look
+                    </h3>
+                    <div class="flex flex-col gap-3">
+                        <button onclick="fetchWeather('Ahmedabad')"
+                            class="flex justify-between items-center p-3 bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 rounded-xl transition shadow-md">
+                            <span class="font-medium text-md">Ahmedabad</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 opacity-50"></i>
+                        </button>
+                        <button onclick="fetchWeather('Mumbai')"
+                            class="flex justify-between items-center p-3 bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 rounded-xl transition shadow-md">
+                            <span class="font-medium text-md">Mumbai</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 opacity-50"></i>
+                        </button>
+                        <button onclick="fetchWeather('London')"
+                            class="flex justify-between items-center p-3 bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 rounded-xl transition shadow-md">
+                            <span class="font-medium text-md">London</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 opacity-50"></i>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <section
+                class="lg:col-span-3 bg-black/5 dark:bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-black/5 dark:border-white/10 mt-6">
+                <h3 class="text-xl font-semibold mb-4">5-Day Forecast</h3>
+                <div id="daily-forecast" class="flex flex-col gap-2"></div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
