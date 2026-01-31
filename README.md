@@ -11,7 +11,7 @@ A simple, clean weather app that goes a step beyond just showing temperature. It
 
 | Day Mode | Night Mode |
 | :---: | :---: |
-| ![Day Theme Screenshot](dayScreenshot.png) | ![Night Theme Screenshot](nightScreenshot.png) |
+| ![Day Theme Screenshot](nightScreenshot.png) | ![Night Theme Screenshot](dayScreenshot.png) |
 | *Clear skies and bright gradients.* | *Automatic dark theme after sunset.* |
 
 ---
